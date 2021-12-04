@@ -27,8 +27,8 @@ class Config:
     log_dir   = os.path.join(save_dir,"logs")
     ckpt_dir  = os.path.join(save_dir, "checkpoints")
 
-    model_def          = os.path.join(data_dir, "model.cfg")
-    pretrained_weights = ""
+    model_def          = "yolov3-custom.cfg"
+    pretrained_weights = "yolov3.weights"
 
     epochs     = 300
     iou_thres  = 0.5
