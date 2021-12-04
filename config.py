@@ -21,6 +21,7 @@ class Config:
     data_dir  = "../data/Gaze_Data/"
     data_file = os.path.join(data_dir, "gaze.data")
     num_workers = 2
+    verbose = True
 
     save_dir  = "runs/EXP1_GAZE"
     log_dir   = os.path.join(save_dir,"logs")
