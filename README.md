@@ -18,8 +18,8 @@ Download our dataset here:
 
 ## Training
 - The training code and required instructions are available for the following modules in their respective folder in the repository:
-  - [Yolov3](https://github.com/OAfzal/GazeYoloModels/blob/master/Yolov3)
-  - [Yolov4](https://github.com/OAfzal/GazeYoloModels/blob/master/Yolov4)
+  - [Yolov3](https://github.com/OAfzal/GazeYoloModels/blob/master/yolov3)
+  - [Yolov4](https://github.com/OAfzal/GazeYoloModels/blob/master/yolov4)
 
 ## Reference
 This repo was used to generate the results for the following paper on Gaze-based labelling of Pathology data. 
