@@ -35,14 +35,13 @@ $ pip install -r requirements.txt
 <details open>
 <summary>Inference</summary>
 
-Inference with YOLOv3 and [PyTorch Hub](https://github.com/ultralytics/yolov5/issues/36). Models automatically download
-from the [latest YOLOv3 release](https://github.com/ultralytics/yolov3/releases).
+Inference with YOLOv3 gaze or hand models
 
 ```python
 import torch
 
 # Model
-model = torch.hub.load('OAfzal/gaze_model', 'yolov3')  # or hand_model
+model = torch.hub.load('OAfzal/GazeYoloModels', 'gaze_model')  # or hand_model
 
 # Images
 img = 'link to image'  # or file, Path, PIL, OpenCV, numpy, list
