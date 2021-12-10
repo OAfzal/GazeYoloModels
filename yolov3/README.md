@@ -1,9 +1,7 @@
 
 <br>
 <p>
-YOLOv3 🚀 is a family of object detection architectures and models pretrained on the COCO dataset, and represents <a href="https://ultralytics.com">Ultralytics</a>
- open-source research into future vision AI methods, incorporating lessons learned and best practices evolved over thousands of hours of research and development.
-</p>
+YOLOv3 🚀 is a family of object detection architectures and models pretrained on the COCO dataset</p>
 
 <!--
 <a align="center" href="https://ultralytics.com/yolov3" target="_blank">
@@ -44,10 +42,10 @@ from the [latest YOLOv3 release](https://github.com/ultralytics/yolov3/releases)
 import torch
 
 # Model
-model = torch.hub.load('ultralytics/yolov3', 'yolov3')  # or yolov3-spp, yolov3-tiny, custom
+model = torch.hub.load('OAfzal/gaze_model', 'yolov3')  # or hand_model
 
 # Images
-img = 'https://ultralytics.com/images/zidane.jpg'  # or file, Path, PIL, OpenCV, numpy, list
+img = 'link to image'  # or file, Path, PIL, OpenCV, numpy, list
 
 # Inference
 results = model(img)
@@ -64,7 +62,7 @@ results.print()  # or .show(), .save(), .crop(), .pandas(), etc.
 <summary>Inference with detect.py</summary>
 
 `detect.py` runs inference on a variety of sources, downloading models automatically from
-the [latest YOLOv3 release](https://github.com/ultralytics/yolov3/releases) and saving results to `runs/detect`.
+the releases in this repo and saving results to `runs/detect`.
 
 ```bash
 $ python detect.py --source 0  # webcam
