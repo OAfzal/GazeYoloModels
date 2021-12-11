@@ -34,7 +34,7 @@ $ pip install -r requirements.txt
 <br>
 
 <details open>
-<summary>Train with val.py</summary>
+<summary>Train with train.py</summary>
 
 `train.py` trains the yolo model on the data.
 
