@@ -56,7 +56,7 @@ def read_region(xml_path):
     return reg
 
 
-def voc_to_yolo(xml_path, classes):
+def voc_to_yolo(xml_path, classes, version="yolov3"):
     voc_regions = read_region(xml_path)
 
     yolo_regions = []
@@ -66,15 +66,17 @@ def voc_to_yolo(xml_path, classes):
     img_shape = img.shape
 
     for lbl, xyxy in voc_regions:
-        xywh = convert(img_shape, xyxy)
-        xywh = list(map(str, xywh))
+        if version == "yolov3":
+            xywh = convert(img_shape, xyxy)
+            coords = list(map(str, xywh))
+        else:
+            coords = list(map(str, xyxy))
 
-        row = f"{classes.index(lbl)} {' '.join(xywh)}"
+        row = f"{classes.index(lbl)} {' '.join(coords)}"
         yolo_regions.append(row)
 
     with open(xml_path.replace(".xml", ".txt"), "w") as f:
         f.write("\n".join(yolo_regions))
-
 
 if __name__ == "__main__":
 
@@ -84,29 +86,33 @@ if __name__ == "__main__":
     )
 
     parser.add_argument("-c", "--classes", nargs="*", default=["Keratin_Pearl"])
+    parser.add_argument("-v", "--version",  default="yolov3", help="'yolov3' (default) or 'yolov4'")
+
     opt = parser.parse_args()
     classes = opt.classes
 
     pth_to_xml = os.path.join(opt.data, "**/*.xml")
     xml_files = glob.glob(pth_to_xml, recursive=True)
 
+    print(pth_to_xml)
+
     print(opt)
     print(f"No of Files Found: {len(xml_files)}")
 
     assert len(xml_files) != 0
 
-    train_images = glob.glob(os.path.join("/images/train/*.png"), recursive=True)
-    train_images = ["/".join(os.path.realpath(i).split("/")[-5:]) for i in train_images]
+    train_images = glob.glob(os.path.join(opt.data,"images/train/*.png"), recursive=True)
+    train_images = [i for i in train_images]
 
-    test_images = glob.glob("../data/Gaze_Data/images/test/*.png", recursive=True)
-    test_images = ["/".join(os.path.realpath(i).split("/")[-5:]) for i in test_images]
-
-    with open("../data/Gaze_Data/train.txt", "w") as f:
+    with open(os.path.join(opt.data, "train.txt"), "w") as f:
         f.write("\n".join(train_images))
 
-    with open("../data/Gaze_Data/val.txt", "w") as f:
+    test_images = glob.glob(os.path.join(opt.data,"images/test/*.png"), recursive=True)
+    test_images = [j for j in test_images]
+
+    with open(os.path.join(opt.data, "val.txt"), "w") as f:
         f.write("\n".join(test_images))
 
     print(f"Converting voc to yolo format")
     for xml_f in tqdm(xml_files):
-        voc_to_yolo(xml_f, classes)
+        voc_to_yolo(xml_f, classes, opt.version)
