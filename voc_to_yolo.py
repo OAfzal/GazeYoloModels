@@ -113,6 +113,9 @@ if __name__ == "__main__":
     with open(os.path.join(opt.data, "val.txt"), "w") as f:
         f.write("\n".join(test_images))
 
+    with open(os.path.join(opt.data, "data.classes"), "w") as f:
+        f.write("\n".join(classes))
+
     print(f"Converting voc to yolo format")
     for xml_f in tqdm(xml_files):
         voc_to_yolo(xml_f, classes, opt.version)
