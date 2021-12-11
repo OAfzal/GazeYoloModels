@@ -102,13 +102,13 @@ if __name__ == "__main__":
     assert len(xml_files) != 0
 
     train_images = glob.glob(os.path.join(opt.data,"images/train/*.png"), recursive=True)
-    train_images = [i for i in train_images]
+    train_images = [os.path.abspath(i) for i in train_images]
 
     with open(os.path.join(opt.data, "train.txt"), "w") as f:
         f.write("\n".join(train_images))
 
     test_images = glob.glob(os.path.join(opt.data,"images/test/*.png"), recursive=True)
-    test_images = [j for j in test_images]
+    test_images = [os.path.abspath(i) for i in test_images]
 
     with open(os.path.join(opt.data, "val.txt"), "w") as f:
         f.write("\n".join(test_images))
