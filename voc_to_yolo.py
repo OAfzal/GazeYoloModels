@@ -1,10 +1,3 @@
-"""
-Validate a trained  model accuracy on a custom dataset
-
-Usage:
-    $ python voc_to_yolo --path GazeData/ 
-"""
-
 import argparse
 import cv2
 import glob
