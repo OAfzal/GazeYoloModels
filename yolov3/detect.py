@@ -151,10 +151,15 @@ def run(weights=ROOT / 'yolov3.pt',  # model.pt path(s)
                 # Write results
                 for *xyxy, conf, cls in reversed(det):
                     if save_txt:  # Write to file
-                        xywh = (xyxy2xywh(torch.tensor(xyxy).view(1, 4)) / gn).view(-1).tolist()  # normalized xywh
-                        line = (cls, *xywh, conf) if save_conf else (cls, *xywh)  # label format
+ 
+                        coords = torch.tensor(xyxy).view(1, 4).view(-1).tolist()
+                        coords = list(map(str, coords))
+
+                        line = (cls, conf, *coords) if save_conf else (cls, *coords)  # label format
+                        line_to_write = f"{cls} {conf} {' '.join(coords)}\n"
+
                         with open(txt_path + '.txt', 'a') as f:
-                            f.write(('%g ' * len(line)).rstrip() % line + '\n')
+                            f.write(line_to_write)
 
                     if save_img or save_crop or view_img:  # Add bbox to image
                         c = int(cls)  # integer class
@@ -175,6 +180,7 @@ def run(weights=ROOT / 'yolov3.pt',  # model.pt path(s)
             # Save results (image with detections)
             if save_img:
                 if dataset.mode == 'image':
+                    im0 = cv2.resize(im0, (im0.shape[0]//2, im0.shape[1]//2))
                     cv2.imwrite(save_path, im0)
                 else:  # 'video' or 'stream'
                     if vid_path[i] != save_path:  # new video

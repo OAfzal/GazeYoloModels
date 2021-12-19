@@ -2,6 +2,11 @@ import torch
 from torch import nn
 import torch.nn.functional as F
 
+import argparse
+import cv2
+import glob
+from tool.utils import *
+
 
 class Mish(torch.nn.Module):
     def __init__(self):
@@ -419,46 +424,70 @@ class Yolov4(nn.Module):
         return output
 
 
-if  __name__ == "__main__":
-    import sys
-    from PIL import Image
+if __name__ == "__main__":
 
-    namesfile = None
-    if len(sys.argv) == 4:
-        n_classes = int(sys.argv[1])
-        weightfile = sys.argv[2]
-        imgfile = sys.argv[3]
-    elif len(sys.argv) == 5:
-        n_classes = int(sys.argv[1])
-        weightfile = sys.argv[2]
-        imgfile = sys.argv[3]
-        namesfile = sys.argv[4]
-    else:
-        print('Usage: ')
-        print('  python models.py num_classes weightfile imgfile namefile')
+    parser = argparse.ArgumentParser()
 
-    model = Yolov4(n_classes=n_classes)
+    parser.add_argument("--n_classes", type=int, required=True, help="Number of Classes", default=1)
+    parser.add_argument("--ckpt", type=str, required=True, help="Weight Path")
+    parser.add_argument("--data", type=str, required=True, help="Data Folder with Images")
+    parser.add_argument("--nms", type=float, required=True, help="nms_thresh", default=0.5)
+    parser.add_argument("--conf", type=float, required=True, help="confidence_thresh", default=0.5)
 
-    pretrained_dict = torch.load(weightfile, map_location=torch.device('cuda'))
+    opt = parser.parse_args()
+    print(opt)
+
+    model = Yolov4(n_classes=opt.n_classes)
+
+    pretrained_dict = torch.load(opt.ckpt, map_location=torch.device("cpu"))
     model.load_state_dict(pretrained_dict)
 
-    if namesfile == None:
-        if n_classes == 20:
-            namesfile = 'data/voc.names'
-        elif n_classes == 80:
-            namesfile = 'data/coco.names'
-        else:
-            print("please give namefile")
-
-    use_cuda = 1
+    use_cuda = 0
     if use_cuda:
         model.cuda()
 
-    img = Image.open(imgfile).convert('RGB')
-    sized = img.resize((608, 608))
-    from tool.utils import *
+    os.makedirs("./results/", exist_ok=True)
 
-    boxes = do_detect(model, sized, 0.5, n_classes,0.4, use_cuda)
+    for file_path in glob.glob(opt.data):
 
-    class_names = load_class_names(namesfile)
-    plot_boxes(img, boxes, 'predictions.jpg', class_names)
+        img = Image.open(file_path).convert("RGB")
+        
+        try:
+            with open(file_path.replace("images","labels").replace(".png",".txt"), "r") as f:
+                lines = f.read().strip().split("\n")
+        except:
+            print(f"No Annotation Found: {file_path}")
+            lines = [""]
+
+        cv_img = np.array(img)
+        cv_img = cv2.cvtColor(cv_img, cv2.COLOR_RGB2BGR)
+
+        for line in lines:
+            if line == '':
+                continue
+            coord = list(map(int ,line.split(" ")))
+            cv_img = cv2.rectangle(cv_img, (coord[1],coord[2]),(coord[3],coord[4]), (0,255,0), 10)
+
+        sized = img.resize((608, 608))
+
+        boxes = do_detect(model, sized, opt.conf, opt.n_classes, opt.nms, use_cuda)
+        
+        print(file_path)
+        new_boxes = []
+        for box in boxes:            
+
+            coords = list(map(int, xywh2xyxy(np.array(img).shape[:2], box[:4])))
+            cv_img = cv2.rectangle(cv_img, (coords[0],coords[1]),(coords[2],coords[3]), (255,0,0), 5)
+
+            coords = xywh2xyxy(np.array(img).shape[:2], box[:4])
+            row = f"0 {box[5]} {' '.join(coords)}"
+            new_boxes.append(row)
+
+        h,w,_ = cv_img.shape
+        cv_img = cv2.resize(cv_img, (h//2, w//2))
+        cv2.imwrite(f"./results/{os.path.basename(file_path)}", cv_img)
+
+        with open(
+            f"./results/{os.path.basename(file_path).replace('png', 'txt')}", "w"
+        ) as w_file:
+            w_file.write("\n".join(new_boxes))

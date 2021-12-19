@@ -110,6 +110,22 @@ def nms(boxes, nms_thresh):
     return out_boxes
 
 
+def xywh2xyxy(img_size, box):
+    # Width Scale Factor
+    x1, y1, w, h = box
+
+    x2, y2 = x1 + w, y1 + h
+
+    h, w = img_size
+
+    x1, x2 = x1 * w, x2 * w
+    y1, y2 = y1 * h, y2 * h
+
+    box = list(map(str, map(int, [x1, y1, x2, y2])))
+
+    return box
+
+
 def convert2cpu(gpu_matrix):
     return torch.FloatTensor(gpu_matrix.size()).copy_(gpu_matrix)
 

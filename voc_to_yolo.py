@@ -13,8 +13,8 @@ def convert(img_size, box):
     dh, dw = 1.0 / img_size[0], 1.0 / img_size[1]
 
     # Converting to the Middle
-    x = (box[0] + box[1]) / 2.0
-    y = (box[2] + box[3]) / 2.0
+    x = (box[0] + box[2]) / 2.0
+    y = (box[1] + box[3]) / 2.0
 
     # Calculating Width and Height
     w = box[2] - box[0]
@@ -71,6 +71,7 @@ def voc_to_yolo(xml_path, classes, version="yolov3"):
     with open(xml_path.replace(".xml", ".txt"), "w") as f:
         f.write("\n".join(yolo_regions))
 
+
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
@@ -79,7 +80,7 @@ if __name__ == "__main__":
     )
 
     parser.add_argument("-c", "--classes", nargs="*", default=["Keratin_Pearl"])
-    parser.add_argument("-v", "--version",  default="yolov3", help="'yolov3' (default) or 'yolov4'")
+    parser.add_argument("-v", "--version", default="yolov3", help="'yolov3' (default) or 'yolov4'")
 
     opt = parser.parse_args()
     classes = opt.classes
@@ -94,13 +95,15 @@ if __name__ == "__main__":
 
     assert len(xml_files) != 0
 
-    train_images = glob.glob(os.path.join(opt.data,"images/train/*.png"), recursive=True)
+    train_images = glob.glob(
+        os.path.join(opt.data, "images/train/*.png"), recursive=True
+    )
     train_images = [os.path.abspath(i) for i in train_images]
 
     with open(os.path.join(opt.data, "train.txt"), "w") as f:
         f.write("\n".join(train_images))
 
-    test_images = glob.glob(os.path.join(opt.data,"images/test/*.png"), recursive=True)
+    test_images = glob.glob(os.path.join(opt.data, "images/test/*.png"), recursive=True)
     test_images = [os.path.abspath(i) for i in test_images]
 
     with open(os.path.join(opt.data, "val.txt"), "w") as f:
