@@ -70,7 +70,7 @@ $ python val.py --data {path_to_yaml_file} --weights {path_to_model}
 
 * All models were trained for 1000 epochs with with default settings, hyperparameters and Early Stopping Callback with a patience of 100.
 * All models stopped training early around the ~300th epoch
-* The checkpoints for each of the model can be found [here](https://1drv.ms/u/s!Asufem_WXMfhiiW3_xuy1_eQqZbA?e=tgX2B5)
+* The checkpoints for each of the model can be found [here](https://1drv.ms/u/s!Asufem_WXMfhilpOnB9XmzLqZDpR?e=DyDm1H)
 * Reproduce by `python val.py --data {modality}.yaml --img 640 --conf {} --iou {}`
 
 </details>
